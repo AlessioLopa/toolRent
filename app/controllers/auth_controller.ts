@@ -14,6 +14,14 @@ export default class AuthController {
     return response.ok({ token: token, ...user.serialize() })
   }
 
+  async register({ request, response }: HttpContext) {
+    const payload = await request.validateUsing(registerValidator)
+
+    const user = await User.create(payload)
+
+    return response.created(user)
+  }
+
   async logout({ auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
 
@@ -25,13 +33,5 @@ export default class AuthController {
     await User.accessTokens.delete(user, token)
 
     return response.ok({ message: 'Logged out successfully' })
-  }
-
-  async register({ request, auth, response }: HttpContext) {
-    const payload = await request.validateUsing(registerValidator)
-
-    const user = await User.create(payload)
-
-    return response.created(user)
   }
 }

@@ -39,7 +39,7 @@ router
 router
   .group(() => {
     router.post('login', [AuthController, 'login'])
-    router.post('logout', [AuthController, 'logout'])
+    router.post('logout', [AuthController, 'logout']).use(middleware.auth())
     router.post('register', [AuthController, 'register'])
   })
   .prefix('user')
