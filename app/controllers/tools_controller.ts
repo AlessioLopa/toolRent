@@ -1,6 +1,7 @@
 import Tool from '#models/tool'
 import { ToolValidator } from '#validators/tool'
 import type { HttpContext } from '@adonisjs/core/http'
+import Status from '@adonisjs/lucid/commands/migration/status'
 import { DateTime } from 'luxon'
 
 export default class ToolsController {
@@ -21,15 +22,18 @@ export default class ToolsController {
    * Handle form submission for the create action
    */
   async store({ request, response }: HttpContext) {
-    const { name, description, status, due_date, category_id } =
-      await request.validateUsing(ToolValidator)
+    const {
+      name,
+      description,
+      category_id: categoryId,
+    } = await request.validateUsing(ToolValidator)
 
     const tool = await Tool.create({
       name,
       description,
-      status,
-      due_date: due_date ? DateTime.fromJSDate(due_date) : null,
-      category_id: category_id,
+      status: 'available' as const,
+      due_date: null,
+      category_id: categoryId,
     })
     response.created(tool)
   }
@@ -51,17 +55,18 @@ export default class ToolsController {
    * Handle form submission for the edit action
    */
   async update({ params, request, response }: HttpContext) {
-    const { name, description, status, due_date, category_id } =
-      await request.validateUsing(ToolValidator)
+    const {
+      name,
+      description,
+      category_id: categoryId,
+    } = await request.validateUsing(ToolValidator)
 
     const tool = await Tool.findOrFail(params.id)
 
-    const updatedTool = await tool.merge({
+    const updatedTool = tool.merge({
       name,
       description,
-      status,
-      due_date: due_date ? DateTime.fromJSDate(due_date) : null,
-      category_id: category_id,
+      category_id: categoryId,
     })
 
     await updatedTool.save()
@@ -69,6 +74,21 @@ export default class ToolsController {
     return response.ok(updatedTool)
   }
 
+  async overdue({}: HttpContext) {
+    const tools = await Tool.query()
+      .where('status', 'rented')
+      .where('due_date', '<', DateTime.now().toSQL()!)
+      .orderBy('due_date', 'asc')
+
+    return tools
+  }
+
+  async overdueSimulate({}: HttpContext) {
+    const tools = await Tool.query()
+      .where('status', 'rented')
+      .where('due_date', '<', DateTime.now().plus({ hours: 72 }).toSQL()!)
+    return tools
+  }
   /**
    * Delete record
    */
