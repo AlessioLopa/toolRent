@@ -17,3 +17,18 @@ export const login = async (email: string, password: string) => {
     }
   }
 }
+
+export const register = async (email: string, password: string) => {
+  try {
+    const response = await api.post('/user/register', { email, password })
+    if (response.status === 201) {
+      return true
+    }
+    return false
+  } catch (error: AxiosError | any) {
+    throw {
+      message: error.response?.data.errors[0].message,
+      status: error.response?.status,
+    }
+  }
+}
