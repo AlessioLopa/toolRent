@@ -1,0 +1,40 @@
+import type { AxiosError } from 'axios'
+import { api } from './apiService'
+
+export const getTools = async () => {
+  try {
+    const response = await api.get('/tools')
+    return response.data
+  } catch (error: AxiosError | any) {
+    throw {
+      message: error.response?.data.errors[0].message,
+      status: error.response?.status,
+    }
+  }
+}
+
+export const getToolsOverdue = async () => {
+  try {
+    const response = await api.get('/tools/overdue')
+    return response.data
+  } catch (error: AxiosError | any) {
+    throw {
+      message: error.response?.data.errors[0].message,
+      status: error.response?.status,
+    }
+  }
+}
+
+export const getToolsOverdueSimulate = async () => {
+  try {
+    const response = await api.get('/tools/overdue/simulate')
+    return response.data
+  } catch (error: AxiosError | any) {
+    throw {
+      message: error.response?.data.errors[0].message,
+      status: error.response?.status,
+    }
+  }
+}
+
+export const getTool = async (id: number) => {}
