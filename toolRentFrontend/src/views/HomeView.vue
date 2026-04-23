@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import ToolsListComponent from '@/components/ToolsListComponent.vue'
-import { getTools, getToolsOverdue } from '@/services/toolsService'
+import { getTools, getToolsOverdue, getToolsOverdueSimulate } from '@/services/toolsService'
 import { onMounted, ref } from 'vue'
+import Button from 'primevue/button'
 
+const VITE_ENV = import.meta.env.VITE_ENV
 const tools = ref()
 
 onMounted(async () => {
@@ -24,18 +26,26 @@ const toolsOverdue = async () => {
     alert('Failed to fetch overdue tools: ' + error.message)
   }
 }
-const timeSimulation = () => {}
+const timeSimulation = async () => {
+  try {
+    tools.value = await getToolsOverdueSimulate()
+  } catch (error: any) {
+    alert('Failed to simulate time: ' + error.message)
+  }
+}
 </script>
 
 <template>
   <div class="page">
     <div class="list-options">
       <Button @click="getAllTools()">See all tools</Button>
-      <button @click="toolsOverdue()">See tools overdue</button>
-      <button @click="timeSimulation()">Simulate time (+48h)</button>
+      <Button @click="toolsOverdue()">See tools overdue</Button>
+      <Button v-if="VITE_ENV === 'development'" @click="timeSimulation()"
+        >Simulate time (+48h)</Button
+      >
     </div>
     <div class="data-table">
-      <ToolsListComponent :tools="tools" />
+      <ToolsListComponent :tools="tools" @update:tools="getAllTools" />
     </div>
   </div>
 </template>

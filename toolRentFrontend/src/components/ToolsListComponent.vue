@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { getCategories } from '@/services/categoriesService'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
+import Button from 'primevue/button'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { returnTool, rentTool } from '@/services/toolsService'
 
 const tools = ref<Tool[]>()
-const categories = ref<Category[]>()
+const toast = useToast()
 
 const props = defineProps({
   tools: {
@@ -14,6 +18,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const emit = defineEmits(['update:tools'])
 
 interface Tool {
   id: number
@@ -29,15 +35,51 @@ const getSeverityStatus = (status: string) => {
     case 'available':
       return 'success'
     case 'rented':
-      return 'warning'
+      return 'warn'
     default:
       return 'success'
   }
 }
+
+const seeDetailTool = (data: Tool) => {
+  toast.add({
+    severity: 'info',
+    summary: 'Tool details',
+    detail: `Name: ${data.name}, Description: ${data.description}`,
+    life: 3000,
+  })
+}
+
+const selectRentTool = async (data: Tool) => {
+  if (await rentTool(data.id)) {
+    toast.add({
+      severity: 'info',
+      summary: 'Tool rented',
+      detail: `You have successfully rented the tool: ${data.name}`,
+      life: 3000,
+    })
+    emit('update:tools')
+  }
+}
+
+const selectReturnTool = async (data: Tool) => {
+  if (await returnTool(data.id)) {
+    toast.add({
+      severity: 'info',
+      summary: 'Tool returned',
+      detail: `You have successfully returned the tool: ${data.name}`,
+      life: 3000,
+    })
+    emit('update:tools')
+  }
+}
+
+const delayed = computed(() => {})
 </script>
 
 <template>
   <div class="body">
+    <Toast />
     <DataTable class="tools-table" :value="props.tools">
       <Column field="name" header="Name"></Column>
       <Column field="description" header="Description"></Column>
@@ -51,6 +93,22 @@ const getSeverityStatus = (status: string) => {
       </Column>
       <Column field="category.name" header="Category"></Column>
       <Column field="dueDate" header="Date de retour"></Column>
+      <Column class="w-24 !text-end">
+        <template #body="{ data }">
+          <Button icon="pi pi-search" @click="seeDetailTool(data)" severity="secondary"></Button>
+          <Button
+            v-show="data.status === 'available'"
+            icon="pi pi-sign-out"
+            @click="selectRentTool(data)"
+            severity="secondary"
+          ></Button>
+          <Button
+            v-show="data.status === 'rented'"
+            icon="pi pi-sign-in"
+            @click="selectReturnTool(data)"
+            severity="secondary"
+          ></Button> </template
+      ></Column>
     </DataTable>
   </div>
 </template>

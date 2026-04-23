@@ -37,4 +37,28 @@ export const getToolsOverdueSimulate = async () => {
   }
 }
 
+export const rentTool = async (id: number) => {
+  try {
+    const response = await api.post(`/tools/${id}/rent`)
+    return response.data
+  } catch (error: AxiosError | any) {
+    throw {
+      message: error.response?.data.message,
+      status: error.response?.status,
+    }
+  }
+}
+
+export const returnTool = async (id: number) => {
+  try {
+    const response = await api.post(`/tools/${id}/return`)
+    return response.data
+  } catch (error: AxiosError | any) {
+    throw {
+      message: error.response?.data.message,
+      status: error.response?.status,
+    }
+  }
+}
+
 export const getTool = async (id: number) => {}
