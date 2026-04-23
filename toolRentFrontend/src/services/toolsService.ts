@@ -7,7 +7,7 @@ export const getTools = async () => {
     return response.data
   } catch (error: AxiosError | any) {
     throw {
-      message: error.response?.data.errors[0].message,
+      message: error.response?.data.message,
       status: error.response?.status,
     }
   }
@@ -19,7 +19,7 @@ export const getToolsOverdue = async () => {
     return response.data
   } catch (error: AxiosError | any) {
     throw {
-      message: error.response?.data.errors[0].message,
+      message: error.response?.data.message,
       status: error.response?.status,
     }
   }
@@ -31,7 +31,7 @@ export const getToolsOverdueSimulate = async () => {
     return response.data
   } catch (error: AxiosError | any) {
     throw {
-      message: error.response?.data.errors[0].message,
+      message: error.response?.data.message,
       status: error.response?.status,
     }
   }

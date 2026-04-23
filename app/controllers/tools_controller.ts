@@ -9,7 +9,7 @@ export default class ToolsController {
    * Display a list of resource
    */
   async index({}: HttpContext) {
-    const tools = await Tool.query().orderBy('id', 'asc')
+    const tools = await Tool.query().orderBy('id', 'asc').preload('category')
     return tools
   }
 
@@ -79,6 +79,7 @@ export default class ToolsController {
       .where('status', 'rented')
       .where('due_date', '<', DateTime.now().toSQL()!)
       .orderBy('due_date', 'asc')
+      .preload('category')
 
     return tools
   }
@@ -87,6 +88,7 @@ export default class ToolsController {
     const tools = await Tool.query()
       .where('status', 'rented')
       .where('due_date', '<', DateTime.now().plus({ hours: 72 }).toSQL()!)
+      .preload('category')
     return tools
   }
   /**

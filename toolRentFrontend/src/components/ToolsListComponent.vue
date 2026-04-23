@@ -5,22 +5,24 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
 
-const tools = ref()
-const categories = ref([])
+const tools = ref<Tool[]>()
+const categories = ref<Category[]>()
 
 const props = defineProps({
   tools: {
-    type: Array,
+    type: Array as () => Tool[],
     required: true,
   },
 })
 
-onMounted(async () => {
-  categories.value = await getCategories()
-
-  console.log(tools)
-  console.log(categories)
-})
+interface Tool {
+  id: number
+  name: string
+  description: string
+  status: string
+  categoryId: number
+  dueDate: string
+}
 
 const getSeverityStatus = (status: string) => {
   switch (status) {
@@ -47,6 +49,7 @@ const getSeverityStatus = (status: string) => {
           />
         </template>
       </Column>
+      <Column field="category.name" header="Category"></Column>
       <Column field="dueDate" header="Date de retour"></Column>
     </DataTable>
   </div>

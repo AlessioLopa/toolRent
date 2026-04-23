@@ -20,7 +20,7 @@ export default class Tool extends BaseModel {
   declare due_date: DateTime | null
 
   @column()
-  declare category_id: number
+  declare categoryId: number
 
   @belongsTo(() => Category)
   declare category: BelongsTo<typeof Category>

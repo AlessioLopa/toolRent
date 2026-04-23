@@ -6,7 +6,7 @@ import { onMounted, ref } from 'vue'
 const tools = ref()
 
 onMounted(async () => {
-  tools.value = await getAllTools()
+  await getAllTools()
 })
 
 const getAllTools = async () => {
