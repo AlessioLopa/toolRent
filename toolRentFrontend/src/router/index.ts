@@ -12,6 +12,7 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: HomeView,
+      meta: { requireAuth: true },
     },
     {
       path: '/register',
@@ -24,6 +25,12 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue'),
     },
   ],
+})
+
+router.beforeEach((to) => {
+  if (to.meta.requireAuth && !localStorage.getItem('token')) {
+    return { name: 'login' }
+  }
 })
 
 export default router
