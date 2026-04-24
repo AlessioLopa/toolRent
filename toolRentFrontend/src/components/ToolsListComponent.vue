@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { getCategories } from '@/services/categoriesService'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
@@ -36,6 +35,8 @@ const getSeverityStatus = (status: string) => {
       return 'success'
     case 'rented':
       return 'warn'
+    case 'delayed':
+      return 'danger'
     default:
       return 'success'
   }
@@ -73,14 +74,12 @@ const selectReturnTool = async (data: Tool) => {
     emit('update:tools')
   }
 }
-
-const delayed = computed(() => {})
 </script>
 
 <template>
   <div class="body">
     <Toast />
-    <DataTable class="tools-table" :value="props.tools">
+    <DataTable class="tools-table" :value="props.tools" sortField="category.name" :sortOrder="-1">
       <Column field="name" header="Name"></Column>
       <Column field="description" header="Description"></Column>
       <Column header="Status">
