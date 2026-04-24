@@ -22,18 +22,14 @@ export default class ToolsController {
    * Handle form submission for the create action
    */
   async store({ request, response }: HttpContext) {
-    const {
-      name,
-      description,
-      category_id: categoryId,
-    } = await request.validateUsing(ToolValidator)
+    const { name, description, categoryId: categoryId } = await request.validateUsing(ToolValidator)
 
     const tool = await Tool.create({
       name,
       description,
       status: 'available' as const,
       due_date: null,
-      category_id: categoryId,
+      categoryId: categoryId,
     })
     response.created(tool)
   }
@@ -55,18 +51,14 @@ export default class ToolsController {
    * Handle form submission for the edit action
    */
   async update({ params, request, response }: HttpContext) {
-    const {
-      name,
-      description,
-      category_id: categoryId,
-    } = await request.validateUsing(ToolValidator)
+    const { name, description, categoryId: categoryId } = await request.validateUsing(ToolValidator)
 
     const tool = await Tool.findOrFail(params.id)
 
     const updatedTool = tool.merge({
       name,
       description,
-      category_id: categoryId,
+      categoryId: categoryId,
     })
 
     await updatedTool.save()

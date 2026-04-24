@@ -1,5 +1,6 @@
 import type { AxiosError } from 'axios'
 import { api } from './apiService'
+import type { Tool } from '@/interfaces/Tool'
 
 export const getTools = async () => {
   try {
@@ -7,7 +8,7 @@ export const getTools = async () => {
     return response.data
   } catch (error: AxiosError | any) {
     throw {
-      message: error.response?.data.message,
+      message: error.response?.data.errors[0].message,
       status: error.response?.status,
     }
   }
@@ -19,7 +20,7 @@ export const getToolsOverdue = async () => {
     return response.data
   } catch (error: AxiosError | any) {
     throw {
-      message: error.response?.data.message,
+      message: error.response?.data.errors[0].message,
       status: error.response?.status,
     }
   }
@@ -31,7 +32,7 @@ export const getToolsOverdueSimulate = async () => {
     return response.data
   } catch (error: AxiosError | any) {
     throw {
-      message: error.response?.data.message,
+      message: error.response?.data.errors[0].message,
       status: error.response?.status,
     }
   }
@@ -43,7 +44,7 @@ export const rentTool = async (id: number) => {
     return response.data
   } catch (error: AxiosError | any) {
     throw {
-      message: error.response?.data.message,
+      message: error.response?.data.errors[0].message,
       status: error.response?.status,
     }
   }
@@ -55,7 +56,19 @@ export const returnTool = async (id: number) => {
     return response.data
   } catch (error: AxiosError | any) {
     throw {
-      message: error.response?.data.message,
+      message: error.response?.data.errors[0].message,
+      status: error.response?.status,
+    }
+  }
+}
+
+export const postTool = async (payload: Tool) => {
+  try {
+    const response = await api.post('/tools', payload)
+    return response.data
+  } catch (error: AxiosError | any) {
+    throw {
+      message: error.response?.data.errors[0].message,
       status: error.response?.status,
     }
   }

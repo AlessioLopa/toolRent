@@ -7,6 +7,7 @@ import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { returnTool, rentTool } from '@/services/toolsService'
+import { type Tool } from '@/interfaces/Tool'
 
 const tools = ref<Tool[]>()
 const toast = useToast()
@@ -19,15 +20,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:tools'])
-
-interface Tool {
-  id: number
-  name: string
-  description: string
-  status: string
-  categoryId: number
-  dueDate: string
-}
 
 const getSeverityStatus = (status: string) => {
   switch (status) {
@@ -52,7 +44,7 @@ const seeDetailTool = (data: Tool) => {
 }
 
 const selectRentTool = async (data: Tool) => {
-  if (await rentTool(data.id)) {
+  if (data.id && (await rentTool(data.id))) {
     toast.add({
       severity: 'info',
       summary: 'Tool rented',
@@ -64,7 +56,7 @@ const selectRentTool = async (data: Tool) => {
 }
 
 const selectReturnTool = async (data: Tool) => {
-  if (await returnTool(data.id)) {
+  if (data.id && (await returnTool(data.id))) {
     toast.add({
       severity: 'info',
       summary: 'Tool returned',

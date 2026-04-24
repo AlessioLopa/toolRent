@@ -3,10 +3,14 @@ import ToolsListComponent from '@/components/ToolsListComponent.vue'
 import { getTools, getToolsOverdue, getToolsOverdueSimulate } from '@/services/toolsService'
 import { onMounted, ref } from 'vue'
 import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
+import NewToolComponent from '@/components/NewToolComponent.vue'
+import DataView from 'primevue/dataview'
 
 const VITE_ENV = import.meta.env.VITE_ENV
 const tools = ref()
 const delayed = ref(false)
+const addToolDialogVisibility = ref(false)
 
 onMounted(async () => {
   await getAllTools()
@@ -79,6 +83,20 @@ const setToolsStatusIfDelayed = (tools: any[]) => {
       <Button v-if="VITE_ENV === 'development'" @click="timeSimulation()"
         >Simulate time (+48h)</Button
       >
+      <Button
+        @click="addToolDialogVisibility = true"
+        icon="pi pi-plus"
+        label="Add new tool"
+      ></Button>
+      <NewToolComponent
+        :visible="addToolDialogVisibility"
+        @update:visible="
+          (visibility) => {
+            addToolDialogVisibility = visibility
+            getAllTools()
+          }
+        "
+      ></NewToolComponent>
     </div>
     <div class="data-table">
       <ToolsListComponent :tools="tools" @update:tools="getAllTools" />
